@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Mentioned Docs</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="logo.png">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify-themeable@0/dist/css/theme-simple.css">
+  <style>
+    :root {
+      --base-background-color: #000;
+      --base-color: #fff;
+      --theme-color: #fff;
+      --heading-color: #fff;
+      --sidebar-background: #0a0a0a;
+      --sidebar-border-color: #1a1a1a;
+      --sidebar-nav-link-color: #ccc;
+      --sidebar-nav-link-color--active: #fff;
+      --sidebar-nav-link-font-weight--active: bold;
+      --sidebar-name-color: #fff;
+      --link-color: #ccc;
+      --link-color--hover: #fff;
+      --code-inline-background: #1a1a1a;
+      --code-inline-color: #fff;
+      --blockquote-border-color: #333;
+      --notice-tip-border-color: #fff;
+      --cover-background-color: #000;
+      --cover-color: #fff;
+      --search-background: #111;
+      --search-result-keyword-color: #fff;
+      --search-result-keyword-background: #333;
+    }
+
+    body {
+      background: #000;
+      color: #fff;
+    }
+
+    .sidebar {
+      background: #0a0a0a;
+    }
+
+    .markdown-section {
+      max-width: 800px;
+      background: #000 !important;
+      color: #fff !important;
+    }
+
+    .content,
+    .markdown-section *:not(code):not(pre):not(table):not(th):not(td) {
+      background-color: transparent !important;
+    }
+
+    .markdown-section h1,
+    .markdown-section h2,
+    .markdown-section h3 {
+      color: #fff;
+    }
+
+    .markdown-section code {
+      background: #1a1a1a;
+      color: #fff;
+    }
+
+    .markdown-section pre {
+      background: #111 !important;
+    }
+
+    .markdown-section table {
+      background: transparent;
+      border-collapse: collapse;
+    }
+
+    .markdown-section table th,
+    .markdown-section table td {
+      color: #fff;
+      border: none;
+      border-bottom: 1px solid #222;
+    }
+
+    .markdown-section table th {
+      background: transparent;
+      color: #888;
+    }
+
+    .markdown-section blockquote {
+      border-left-color: #444;
+      color: #aaa;
+    }
+
+    .app-nav a {
+      color: #ccc;
+    }
+
+    .app-nav a:hover {
+      color: #fff;
+    }
+
+    .sidebar-nav li a {
+      color: #ccc;
+    }
+
+    .sidebar-nav li a:hover,
+    .sidebar-nav li.active > a {
+      color: #fff;
+    }
+
+    .cover-main {
+      color: #fff;
+    }
+
+    .cover .cover-main > p:last-child a {
+      background: #fff;
+      color: #000;
+      border: none;
+    }
+
+    .cover .cover-main > p:last-child a:hover {
+      background: #ccc;
+      color: #000;
+    }
+
+    .cover .cover-main > p:last-child a:last-child {
+      background: transparent;
+      color: #fff;
+      border: 1px solid #fff;
+    }
+
+    .cover .cover-main > p:last-child a:last-child:hover {
+      background: #fff;
+      color: #000;
+    }
+
+    .cover-main > p:first-child img {
+      width: 120px;
+    }
+
+    .flow-step {
+      border-left: 2px solid #333;
+      padding: 12px 0 12px 20px;
+      margin: 0;
+      position: relative;
+    }
+
+    .flow-step::before {
+      content: '';
+      width: 10px;
+      height: 10px;
+      background: #fff;
+      border-radius: 50%;
+      position: absolute;
+      left: -6px;
+      top: 16px;
+    }
+
+    .flow-step:last-child {
+      border-left-color: transparent;
+    }
+
+    .flow-section-label {
+      color: #666;
+      font-size: 0.75em;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 2px;
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <script>
+    window.$docsify = {
+      name: '<img src="logo.png" alt="Mentioned" width="32" style="vertical-align: middle; margin-right: 8px;">Mentioned',
+      repo: false,
+      loadSidebar: true,
+      subMaxLevel: 2,
+      coverpage: false,
+      auto2top: true,
+    }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/docsify.min.js"></script>
+</body>
+</html>
