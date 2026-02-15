@@ -10,4 +10,9 @@
     - [resolve_market](resolve-market.md)
     - [settle_match](settle-match.md)
     - [claim](claim.md)
+  - Data Fetching
+    - [Markets](fetching-on-chain-data.md)
+    - [User Positions](fetching-user-positions.md)
   - [Escrow PDA](escrow-pda.md)
+- Designs
+  - [CLOB Requirements](clob-requirements.md)
