@@ -19,4 +19,6 @@ Markets are created around sets of words (up to 8 per market). For each word, us
 
 - [MVP Flow](mvp-flow.md) — End-to-end walkthrough of the MVP
 - [Contract Overview](contract-overview.md) — Full contract architecture and instructions
+- [Frontend SDK](frontend-sdk.md) — Client library reference (instruction builders, LMSR math)
+- [Trading Flow](trading-flow.md) — Buy/sell/claim flows in the UI
 - [Market Types](market-types.md) — Potential market categories

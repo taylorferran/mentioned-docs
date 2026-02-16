@@ -121,9 +121,8 @@ All position fetching uses `@solana/kit` v6:
 - `getTokenAccountsByOwner` — fetches user's SPL token accounts
 - `getProgramAccounts` — fetches all MarketAccount accounts
 
-## Not yet implemented
+## Related pages
 
-- **Real-time pricing** — position valuation should use LMSR implied price from on-chain quantities
-- **P&L / cost basis** — no purchase price stored on-chain, needs trade event indexing
-- **History tab** — needs on-chain event log for resolved/redeemed positions
-- **Withdraw UI** — `withdraw` instruction exists but no UI button yet
+- [Portfolio & Cost Basis](portfolio.md) — P&L tracking and cost basis computation from trade history
+- [Trade History](trade-history.md) — How trade events are parsed from on-chain logs
+- [Scalability Roadmap](scalability.md) — Planned migration to an indexer for position fetching
