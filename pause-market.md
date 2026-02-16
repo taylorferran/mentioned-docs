@@ -1,9 +1,8 @@
 # pause_market
 
-Pauses an active market, halting trading. Only the market's authority (admin) can call this.
+Toggles a market between Open and Paused states. When paused, trading (buy/sell) is halted. Only the market's authority (admin) can call this.
 
 **Caller:** Admin
-**Status:** Implemented
 
 ## Parameters
 
@@ -13,35 +12,19 @@ None.
 
 | Account | Type | Description |
 |---|---|---|
-| authority | Signer | Admin wallet (must match `word_market.authority`) |
-| word_market | Account, mut | The market to pause |
+| authority | Signer | Admin wallet (must match `market.authority`) |
+| market | Account, mut | The market to pause/unpause |
 
 ## Logic
 
 1. Validate caller is the market authority
-2. Validate market status is `Active`
-3. Set status to `Paused`
+2. If `Open` → set to `Paused`
+3. If `Paused` → set to `Open`
+4. If `Resolved` → error
 
 ## Errors
 
 | Error | Condition |
 |---|---|
 | UnauthorizedAuthority | Signer is not the market authority |
-| MarketNotActive | Market is not in `Active` status |
-
-## Source
-
-```rust
-pub fn handle_pause_market(ctx: Context<PauseMarket>) -> Result<()> {
-    let word_market = &mut ctx.accounts.word_market;
-
-    require!(
-        word_market.status == MarketStatus::Active,
-        MentionMarketError::MarketNotActive
-    );
-
-    word_market.status = MarketStatus::Paused;
-
-    Ok(())
-}
-```
+| MarketAlreadyResolved | Market is already resolved (cannot toggle) |

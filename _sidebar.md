@@ -14,5 +14,6 @@
     - [Markets](fetching-on-chain-data.md)
     - [User Positions](fetching-user-positions.md)
   - [Escrow PDA](escrow-pda.md)
+- [Market Types](market-types.md)
 - Designs
   - [CLOB Requirements](clob-requirements.md)

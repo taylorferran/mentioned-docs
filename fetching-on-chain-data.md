@@ -4,95 +4,110 @@ How the frontend reads market data directly from the Solana program.
 
 ## Overview
 
-The app fetches `WordMarket` accounts from devnet using `getProgramAccounts` with a discriminator filter. No indexer or backend API needed — it reads raw account data and deserializes with Borsh.
+The app fetches `MarketAccount` accounts from devnet using `getProgramAccounts` with a discriminator filter. No indexer or backend API needed — it reads raw account data and deserializes with a custom Borsh deserializer.
 
-## Fetching WordMarket accounts
+## Fetching MarketAccount accounts
 
 The client library (`lib/mentionMarket.ts`) does the following:
 
 1. Connect to devnet RPC (`https://api.devnet.solana.com`)
-2. Call `getProgramAccounts` on program `AJ4XSwJoh2C8vmd8U7xhpzMkzkZZPaBRpbfpkmm4DmeN` with a `memcmp` filter matching the 8-byte WordMarket account discriminator at offset 0:
-   ```
-   discriminator: [19, 245, 212, 180, 55, 87, 181, 250]
-   ```
-3. Deserialize each account's raw bytes using Borsh layout
+2. Call `getProgramAccounts` on program `2oKQaiKx3C2qpkqFYGDdvEGTyBDJP85iuQtJ5vaPdFrU` with a `memcmp` filter matching the 8-byte MarketAccount discriminator at offset 0
+3. Deserialize each account's raw bytes using a custom Borsh deserializer (`deserializeMarketAccount`)
 
-## Borsh deserialization layout
+## Account structure
 
-Each `WordMarket` account is deserialized in order:
+Each `MarketAccount` contains all data for a market, including embedded `WordState` entries (up to 8):
 
-| Field | Type | Size | Notes |
-|---|---|---|---|
-| authority | Pubkey | 32 bytes | Admin wallet |
-| market_id | u64 LE | 8 bytes | Market group ID |
-| word_index | u16 LE | 2 bytes | Word position in group |
-| label | Borsh string | 4 + N bytes | u32 length prefix + UTF-8 |
-| yes_mint | Pubkey | 32 bytes | YES token mint |
-| no_mint | Pubkey | 32 bytes | NO token mint |
-| vault | Pubkey | 32 bytes | SOL vault |
-| total_collateral | u64 LE | 8 bytes | Lamports in vault |
-| status | u8 | 1 byte | 0=Active, 1=Paused, 2=Resolved |
-| outcome | Option\<u8\> | 1-2 bytes | 0x00=None, 0x01+0x00=Yes, 0x01+0x01=No |
-| bump | u8 | 1 byte | PDA bump |
-| vault_bump | u8 | 1 byte | Vault PDA bump |
+**MarketAccount fields:**
 
-## Filtering by market
+| Field | Type | Notes |
+|---|---|---|
+| version | u8 | Schema version (1) |
+| bump | u8 | PDA bump |
+| market_id | u64 LE | Market identifier |
+| label | Borsh string | Market name (max 64 chars) |
+| authority | Pubkey (32 bytes) | Admin wallet |
+| resolver | Pubkey (32 bytes) | Resolution authority |
+| router | Option\<Pubkey\> | V2 field |
+| pool_vault | Pubkey (32 bytes) | SOL vault PDA |
+| vault_bump | u8 | Vault PDA bump |
+| total_lp_shares | u64 LE | LP share supply |
+| liquidity_param_b | u64 LE | LMSR parameter |
+| base_b_per_sol | u64 LE | B scaling rate |
+| num_words | u8 | Word count (1-8) |
+| words | WordState[8] | Embedded word states |
+| status | u8 | 0=Open, 1=Paused, 2=Resolved |
+| created_at | i64 LE | Creation timestamp |
+| resolves_at | i64 LE | Resolution deadline |
+| resolved_at | Option\<i64\> | Actual resolution time |
+| trade_fee_bps | u16 LE | Fee in basis points |
+| protocol_fee_bps | u16 LE | Protocol fee portion |
+| accumulated_fees | u64 LE | Total fees collected |
 
-The URL param determines which market to display. For a numeric ID (e.g. `/market/1`), the fetched accounts are filtered to those where `account.marketId === BigInt(urlParam)`, then sorted ascending by `wordIndex`.
+**WordState fields (per word):**
+
+| Field | Type | Notes |
+|---|---|---|
+| word_index | u8 | Position in market (0-7) |
+| label | Borsh string | The word (max 32 chars) |
+| yes_mint | Pubkey (32 bytes) | YES token mint |
+| no_mint | Pubkey (32 bytes) | NO token mint |
+| yes_quantity | i64 LE | Net YES tokens outstanding |
+| no_quantity | i64 LE | Net NO tokens outstanding |
+| outcome | Option\<bool\> | None, true (mentioned), or false |
+
+## Fetching a single market
+
+For the market page (`/market/[id]`), `fetchMarket(BigInt(marketId))` fetches a single market by ID — one RPC call instead of fetching all accounts.
 
 ## Mapping to UI
 
-Each `WordMarket` account maps to the frontend's word row:
+Each `WordState` within a `MarketAccount` maps to the frontend's word row:
 
-| WordMarket field | UI field | Notes |
+| WordState field | UI field | Notes |
 |---|---|---|
 | label | word | The tracked word (e.g. "Economy") |
-| — | yesPrice | Hardcoded `0.50` (no price discovery yet) |
-| — | noPrice | Hardcoded `0.50` |
-| totalCollateral | volume | Raw lamports cast to Number |
-| — | change | `0` (no historical data yet) |
+| yes_quantity / no_quantity | yesPrice / noPrice | Derived from LMSR implied price |
+| — | volume | Not directly available (use vault balance) |
 
-Market-level metadata is derived from the group:
+Market-level metadata comes from the `MarketAccount`:
 
-- **Title**: `"Market #${marketId}"`
+- **Title**: `market.label`
 - **Category**: `"Mentions · On-Chain"`
-- **Total volume**: Sum of `totalCollateral` across all words
-- **Status**: Read from the first word's account (all words in a group share lifecycle)
+- **Event time**: derived from `market.resolvesAt`
+- **Status**: `market.status` (Open / Paused / Resolved)
 
 ## Market status
 
 | Status | Badge | Trading |
 |---|---|---|
-| Active | Green | Enabled |
-| Paused | Yellow | Enabled (contract enforces pause separately) |
-| Resolved | Grey | Disabled — button shows "Market Resolved" |
+| Open | Green | Enabled |
+| Paused | Yellow | Disabled |
+| Resolved | Grey | Disabled — shows "Market Resolved" |
 
-When resolved, the outcome (YES/NO) is displayed alongside the badge.
+When resolved, per-word outcomes (`true`/`false`) are displayed.
 
-## Price discovery
+## Pricing
 
-Prices are currently hardcoded at 50/50. Implementing real prices requires:
-
-- An off-chain order book where users submit limit orders
-- A backend matching engine that pairs YES buyers with NO buyers
-- The matched price passed to `settle_match(price, amount)` on-chain
-- A `last_price` field on `WordMarket` (or off-chain API) to feed back into the UI
-
-## Trading panel math
-
-The UI calculates shares and potential payout from the displayed price:
-
+Prices are derived from the LMSR implied price calculation:
 ```
-shares          = amountInSol / activePrice
-potentialPayout = shares × 1 SOL
-potentialProfit = potentialPayout - amountInSol
+p_yes = exp(q_yes / b) / (exp(q_yes / b) + exp(q_no / b))
+p_no  = 1 - p_yes
 ```
 
-Buy/sell buttons are currently UI-only — actual order submission requires the backend matching engine.
+The `yes_quantity`, `no_quantity`, and `liquidity_param_b` fields from the on-chain data feed this calculation.
+
+## PDA seeds
+
+| Account | Seeds |
+|---|---|
+| Market | `["market", market_id]` |
+| Vault | `["vault", market_id]` |
+| YES mint | `["yes_mint", market_id, word_index]` |
+| NO mint | `["no_mint", market_id, word_index]` |
 
 ## File references
 
 - **Page component**: `app/market/[id]/page.tsx`
 - **On-chain client library**: `lib/mentionMarket.ts`
-- **Program IDL**: `solana_contracts/target/idl/mention_market.json`
-- **Program source**: `solana_contracts/programs/mention-market/src/`
+- **Program source**: `solana_contracts/programs/mention-market-amm/src/`

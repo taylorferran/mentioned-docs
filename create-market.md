@@ -1,81 +1,58 @@
 # create_market
 
-Creates a new word market with YES and NO SPL token mints and a SOL vault. Each word within a market group gets its own `WordMarket` account.
+Creates a new market with up to 8 words in a single instruction. Initializes YES and NO SPL token mints for each word via `remaining_accounts`, plus a shared SOL vault.
 
 **Caller:** Admin
-**Status:** Implemented
 
 ## Parameters
 
 | Name | Type | Description |
 |---|---|---|
-| market_id | u64 | Identifier grouping words under one market |
-| word_index | u16 | Index of this word within the market |
-| label | String | The word to trade on (max 32 chars) |
+| market_id | u64 | Unique market identifier |
+| label | String | Market name (max 64 chars) |
+| word_labels | Vec\<String\> | List of words to trade on (1-8, each max 32 chars) |
+| resolves_at | i64 | Unix timestamp for resolution deadline |
+| resolver | Pubkey | Address authorized to resolve outcomes |
+| trade_fee_bps | u16 | Fee per trade in basis points (e.g. 50 = 0.5%) |
+| initial_b | u64 | Starting LMSR liquidity parameter |
+| base_b_per_sol | u64 | How much 'b' scales per SOL of liquidity added |
 
 ## Accounts
 
 | Account | Type | Description |
 |---|---|---|
 | authority | Signer, mut | Admin wallet (pays for account creation) |
-| word_market | PDA, init | The new WordMarket account |
-| yes_mint | PDA, init | SPL token mint for YES shares (6 decimals) |
-| no_mint | PDA, init | SPL token mint for NO shares (6 decimals) |
-| vault | PDA | SOL vault for this market's collateral |
+| market | PDA, init | The new MarketAccount |
+| vault | PDA | SOL vault for this market |
 | token_program | Program | SPL Token program |
 | system_program | Program | Solana system program |
 | rent | Sysvar | Rent sysvar |
+| remaining_accounts | | Pairs of (yes_mint, no_mint) PDAs per word |
 
 ## PDA derivation
 
 ```
-word_market:  ["market", market_id (LE u64), word_index (LE u16)]
-yes_mint:     ["yes_mint", word_market.key()]
-no_mint:      ["no_mint", word_market.key()]
-vault:        ["vault", word_market.key()]
+market:    ["market", market_id]
+vault:     ["vault", market_id]
+yes_mint:  ["yes_mint", market_id, word_index]
+no_mint:   ["no_mint", market_id, word_index]
 ```
 
-Mint authority for both YES and NO mints is the `word_market` PDA itself.
+Mint authority for all YES/NO mints is the `market` PDA. Token decimals: 9.
 
 ## Logic
 
-1. Validate `label.len() <= 32`
-2. Initialize `WordMarket` account with all fields
-3. Set status to `Active`, outcome to `None`, collateral to `0`
-4. Create YES and NO SPL mints (6 decimal places)
-5. Derive and store vault PDA address
+1. Validate label length (<= 64), word count (1-8), word label lengths (<= 32)
+2. Verify `remaining_accounts` has exactly `2 * num_words` entries
+3. For each word: derive and verify YES/NO mint PDAs, create mint accounts via CPI, initialize with 9 decimals
+4. Initialize `MarketAccount` with all fields, status `Open`, zero collateral/fees
+5. Store word states with initial quantities of 0
 
 ## Errors
 
 | Error | Condition |
 |---|---|
-| LabelTooLong | Label exceeds 32 characters |
-
-## Source
-
-```rust
-pub fn handle_create_market(
-    ctx: Context<CreateMarket>,
-    market_id: u64,
-    word_index: u16,
-    label: String,
-) -> Result<()> {
-    require!(label.len() <= 32, MentionMarketError::LabelTooLong);
-
-    let word_market = &mut ctx.accounts.word_market;
-    word_market.authority = ctx.accounts.authority.key();
-    word_market.market_id = market_id;
-    word_market.word_index = word_index;
-    word_market.label = label;
-    word_market.yes_mint = ctx.accounts.yes_mint.key();
-    word_market.no_mint = ctx.accounts.no_mint.key();
-    word_market.vault = ctx.accounts.vault.key();
-    word_market.total_collateral = 0;
-    word_market.status = MarketStatus::Active;
-    word_market.outcome = None;
-    word_market.bump = ctx.bumps.word_market;
-    word_market.vault_bump = ctx.bumps.vault;
-
-    Ok(())
-}
-```
+| MarketLabelTooLong | Market label exceeds 64 chars |
+| WordLabelTooLong | Any word label exceeds 32 chars |
+| TooManyWords | More than 8 words |
+| NoWords | Empty word list |
