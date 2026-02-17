@@ -13,6 +13,10 @@ See [create_market](create-market.md) for the on-chain instruction. The admin fo
 | Word count | 1–8 words per market |
 | Trade fee | 0–10,000 bps |
 
+### Compute budget
+
+Market creation requires ~800K compute units due to Metaplex metadata CPI calls. The admin page automatically prepends a `createSetComputeUnitLimitIx(800_000)` instruction before the create market instruction. No other operations require this.
+
 ## Liquidity management
 
 Per-market controls for adding and withdrawing liquidity.
@@ -45,6 +49,24 @@ Multi-word resolution in a single transaction.
 4. `handleBulkResolve` creates a `createResolveWordIx` for each word and sends all in one transaction
 
 This is more efficient than resolving words individually — one signature instead of N.
+
+## LP position tracking
+
+Each market card in the admin page shows an LP Position panel with real-time data.
+
+### Metrics displayed
+
+| Metric | Source |
+|---|---|
+| **Your Shares** | LP shares held + percentage of total pool (`yourShares / totalLpShares`) |
+| **Pool Value** | Pro-rata share of vault: `yourShares / totalShares * vaultBalance` |
+| **Deposited** | Original deposit amount |
+| **LP P&L** | Pool value − deposited (shows LP loss from trader redemptions) |
+| **Vault Balance** | Total SOL in the vault via `fetchVaultBalance(marketId)` |
+| **Total LP Shares** | From `MarketAccount.totalLpShares` |
+| **Fee Share** | Pro-rata share of `accumulatedFees` |
+
+LP data is fetched alongside markets on page load via `fetchLpPosition(marketId, adminWallet)` and refreshed after deposit/withdraw liquidity actions.
 
 ## Pause / Unpause
 

@@ -4,7 +4,7 @@ How trade events are fetched and displayed from on-chain transaction logs.
 
 ## Overview
 
-Every `buy` and `sell` instruction emits an Anchor `TradeEvent` log. The frontend parses these events from raw transaction data to build trade history charts and user activity feeds. There is no indexer — events are fetched directly from the RPC.
+All instructions now emit Anchor events. `buy` and `sell` emit `TradeEvent` logs, which the frontend parses from raw transaction data to build trade history charts and user activity feeds. Other events (EscrowEvent, MarketCreatedEvent, MarketPausedEvent, LiquidityEvent, ResolutionEvent, RedemptionEvent) are also emitted but not yet indexed client-side. Currently there is no indexer — events are fetched directly from the RPC. See [Indexer Plan](INDEXER_PLAN.md) for the full list of event types and the plan to capture them all server-side.
 
 ## Types
 
@@ -87,24 +87,39 @@ Trade history feeds the price chart on the market page:
 getSignaturesForAddress(PROGRAM_ID, { limit })
     │  → scans the entire program's transaction history
     ▼
-Batch fetch + parse TradeEvent logs (same as above)
+Batch fetch + parse ALL TradeEvent logs (not just the user's)
     │
     ▼
-Filter events where trader == userAddr
+Sort chronologically, track global YES/NO quantities per word
     │
+    ▼
+For each event where trader == userAddr:
+    │  → compare quantity to previous global state
+    │  → quantity increased = buy, decreased = sell
     ▼
 fetchAllMarkets()
     │  → load all markets for label resolution
     ▼
-Enrich with market/word labels
+Enrich with market/word labels, isBuy flag
     │
     ▼
 Return UserTradeEntry[]
 ```
 
+### Buy vs sell detection
+
+The `isBuy` flag is determined by global quantity tracking rather than any field on the event itself:
+
+1. All program trade events are collected and sorted by timestamp
+2. Running totals of `yesQuantity` and `noQuantity` are maintained per `(marketId, wordIndex)`
+3. For each user trade, the `newYesQty` / `newNoQty` from the event is compared to the running total
+4. If the relevant quantity went up → **buy**; if it went down → **sell**
+
+This is necessary because the `TradeEvent` doesn't contain an explicit buy/sell flag.
+
 ### Where it's displayed
 
-- **Profile page → History tab**: Full list with timestamp, market/word labels, direction, quantity, cost, average price, and Solana Explorer links
+- **Profile page → History tab**: Full list with Buy (green) / Sell (orange) badges, timestamp, market/word labels, direction, quantity, cost, and Solana Explorer links. Sells show green `+` prefix on cost (money received), buys show `-` (money spent)
 - **Profile page → Cost basis**: Trade history feeds the `costBasisMap` computation (see [Portfolio](portfolio.md))
 
 ## Limitations

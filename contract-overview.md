@@ -10,18 +10,20 @@ A single `MarketAccount` PDA per market contains up to 8 embedded `WordState` en
 
 ## Instructions
 
-| Instruction | Caller | Description |
-|---|---|---|
-| [deposit](deposit.md) | User | Deposit SOL into a per-user escrow PDA |
-| [withdraw](withdraw.md) | User | Withdraw available SOL from escrow |
-| [create_market](create-market.md) | Admin | Create a market with N words, mints, and vault in a single IX |
-| [pause_market](pause-market.md) | Admin | Toggle pause/unpause on a market |
-| [deposit_liquidity](deposit-liquidity.md) | LP | Deposit SOL into the AMM pool, receive LP shares |
-| [withdraw_liquidity](withdraw-liquidity.md) | LP | Withdraw SOL proportional to LP shares |
-| [buy](buy.md) | User | Buy YES/NO tokens for a word using LMSR pricing |
-| [sell](sell.md) | User | Sell YES/NO tokens back to the AMM |
-| [resolve_word](resolve-word.md) | Resolver | Resolve a single word as mentioned (true) or not (false) |
-| [redeem](redeem.md) | User | Burn winning tokens and receive SOL from vault |
+| Instruction | Caller | Event | Description |
+|---|---|---|---|
+| [deposit](deposit.md) | User | EscrowEvent | Deposit SOL into a per-user escrow PDA |
+| [withdraw](withdraw.md) | User | EscrowEvent | Withdraw available SOL from escrow |
+| [create_market](create-market.md) | Admin | MarketCreatedEvent | Create a market with N words, mints, metadata, and vault |
+| [pause_market](pause-market.md) | Admin | MarketPausedEvent | Toggle pause/unpause on a market |
+| [deposit_liquidity](deposit-liquidity.md) | LP | LiquidityEvent | Deposit SOL into the AMM pool, receive LP shares |
+| [withdraw_liquidity](withdraw-liquidity.md) | LP | LiquidityEvent | Withdraw SOL proportional to LP shares |
+| [buy](buy.md) | User | TradeEvent | Buy YES/NO tokens for a word using LMSR pricing |
+| [sell](sell.md) | User | TradeEvent | Sell YES/NO tokens back to the AMM |
+| [resolve_word](resolve-word.md) | Resolver | ResolutionEvent | Resolve a single word as mentioned (true) or not (false) |
+| [redeem](redeem.md) | User | RedemptionEvent | Burn winning tokens and receive SOL from vault |
+
+All instructions emit Anchor events for indexer support. See [Indexer Plan](INDEXER_PLAN.md) for how these events are captured.
 
 ## Who calls what
 
@@ -139,6 +141,10 @@ Seeds: `["lp", market_id (u64 LE), lp_wallet]`
 | LP Position | `["lp", market_id, lp_wallet]` |
 
 Token decimals: 9 (1,000,000,000 = 1 share = 1 SOL payout on winning redemption)
+
+## Token metadata
+
+YES/NO token mints have on-chain Metaplex Token Metadata so they display correctly in wallets (Phantom, Solflare, etc.). Names follow `"{word} YES"` / `"{word} NO"` and symbols use a 4-char prefix like `BITC-Y` / `BITC-N`. See [create_market](create-market.md) for details.
 
 ## LMSR pricing
 

@@ -9,6 +9,7 @@ Reference for `lib/mentionMarket.ts` — the client library that wraps all on-ch
 | `PROGRAM_ID` | `2oKQaiKx3C2qpkqFYGDdvEGTyBDJP85iuQtJ5vaPdFrU` | AMM program address (devnet) |
 | `RENT_SYSVAR` | `SysvarRent111111111111111111111111111111111` | Sysvar rent address |
 | `ASSOCIATED_TOKEN_PROGRAM` | `ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL` | SPL Associated Token Program |
+| `TOKEN_METADATA_PROGRAM` | `metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s` | Metaplex Token Metadata Program |
 | `createRpc()` | — | Factory that creates a Solana devnet RPC client |
 
 ## PDA helpers
@@ -42,6 +43,17 @@ Each function returns a transaction instruction ready to be signed and sent.
 | `createWithdrawLiquidityIx` | `(lpWallet, marketId, sharesToBurn)` | LP withdraws SOL proportional to shares |
 | `createResolveWordIx` | `(resolver, marketId, wordIndex, outcome)` | Resolve a single word as true/false |
 | `createAtaIx` | `(payer, owner, mint)` | Create an Associated Token Account |
+| `createSetComputeUnitLimitIx` | `(units)` | Set compute unit limit for a transaction |
+
+### Compute budget
+
+`createSetComputeUnitLimitIx` is required before `createCreateMarketIx` because market creation needs ~800K compute units (due to Metaplex metadata CPI calls). No other instructions require this.
+
+```typescript
+const computeIx = createSetComputeUnitLimitIx(800_000)
+const marketIx = await createCreateMarketIx(/* ... */)
+await sendIxs(signer, [computeIx, marketIx])
+```
 
 ### Buy instruction detail
 
@@ -50,6 +62,10 @@ Each function returns a transaction instruction ready to be signed and sent.
 ### Sell instruction detail
 
 `createSellIx` similarly needs the `market` object for mint/ATA derivation. The `minReturn` parameter is the slippage floor — the transaction reverts if the LMSR return is below this value.
+
+### Create market detail
+
+`createCreateMarketIx` now passes 4 `remaining_accounts` per word (previously 2): `[yes_mint, yes_metadata, no_mint, no_metadata]`. The metadata accounts are Metaplex Token Metadata PDAs that give tokens displayable names/symbols in wallets. See [create_market](create-market.md) for the naming convention.
 
 ### ATA creation
 
@@ -93,6 +109,29 @@ sellReturn = C(q_yes, q_no, b) - C(q_yes, q_no - amount, b)    // for NO side
 ### Precision note
 
 The client-side math uses JavaScript floating-point (`Math.exp` / `Math.log`), while the on-chain math uses fixed-point `i128` at 1e9 precision. There may be minor precision drift between what the UI previews and what the contract charges. The slippage buffer on `maxCost` / `minReturn` accounts for this.
+
+## Data fetching helpers
+
+| Function | Signature | Description |
+|---|---|---|
+| `fetchLpPosition` | `(marketId, lpWallet) → LpPosition \| null` | Fetches LP position for a specific wallet and market |
+| `fetchVaultBalance` | `(marketId) → number` | Fetches current SOL balance in the vault PDA |
+| `deserializeLpPosition` | `(data) → LpPosition` | Parses 154-byte on-chain LpPosition account |
+
+### LpPosition type
+
+```typescript
+interface LpPosition {
+  version: number
+  bump: number
+  market: Pubkey
+  owner: Pubkey
+  shares: bigint
+  depositedAt: number
+}
+```
+
+Account discriminator: `[105, 241, 37, 200, 224, 2, 252, 90]`
 
 ## File reference
 

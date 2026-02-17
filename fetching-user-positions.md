@@ -40,8 +40,8 @@ export async function fetchUserPositions(
 
 1. **Parallel fetch** — calls `fetchAllMarkets()` and `rpc.getTokenAccountsByOwner()` simultaneously
 2. **Build lookup maps** — creates mint-to-market maps keyed by mint address, pointing to the MarketAccount and word info
-3. **Match tokens** — iterates through the user's token accounts, checks if each mint exists in the maps
-4. **Build positions** — for each match, calculates shares (raw amount / 1e9) and estimated value
+3. **Match tokens** — iterates through the user's token accounts, checks if each mint exists in the maps. For resolved markets, 0-balance token accounts are included (so redeemed/sold positions still appear)
+4. **Build positions** — for each match, calculates shares (raw amount / 1e9), estimated value, and win/loss status
 
 ### Token math
 
@@ -84,8 +84,20 @@ export interface UserPosition {
   shares: number
   estimatedValueSol: number
   claimable: boolean
+  won: boolean | null    // true = winning side, false = losing side, null = unresolved
 }
 ```
+
+### Resolved position states
+
+The `won` field combined with token balance determines the display state:
+
+| Condition | Label | Meaning |
+|---|---|---|
+| `won && balance === 0` | **Claimed** | User already redeemed winnings |
+| `won && balance > 0` | **Won** | Claimable — user can still redeem |
+| `!won && balance === 0` | **Sold** | User sold before resolution |
+| `!won && balance > 0` | **Lost** | Tokens are worthless |
 
 ## Where positions are displayed
 
@@ -100,14 +112,7 @@ Cash:      1.13 SOL    ←  escrow only
 
 ### Profile page (`app/profile/page.tsx`)
 
-Fetches positions and escrow on mount. Displays:
-
-- **Escrow Balance** — from `fetchEscrow()`
-- **Active Positions** — sum of `estimatedValueSol` for Open/Paused markets
-- **Claimable** — sum of `estimatedValueSol` for claimable positions
-- **Total Positions** — count
-
-Tabs: **Active** (Open/Paused), **Claimable**, **History** (placeholder)
+Fetches positions and escrow on mount. See [Portfolio & Cost Basis](portfolio.md) for full details on the profile dashboard, including the four-tab interface (Active, Claimable, Resolved, History) and P&L tracking.
 
 ### Market page (`app/market/[id]/page.tsx`)
 

@@ -27,3 +27,4 @@
 - Designs
   - [CLOB Requirements](clob-requirements.md)
   - [Scalability Roadmap](scalability.md)
+  - [Indexer Plan](INDEXER_PLAN.md)

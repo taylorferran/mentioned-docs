@@ -132,6 +132,8 @@ The market page refreshes data every 15 seconds via `setInterval`:
 
 Updated values flash green briefly using the `FlashValue` component.
 
+**Resolved markets**: Auto-polling stops entirely for resolved markets — no unnecessary RPC calls. Chart price lines freeze at the last trade point rather than extending to "now".
+
 ## Mobile trading
 
 On mobile viewports, the trading panel renders as a bottom sheet:
