@@ -1,10 +1,12 @@
 # Trade History
 
-How trade events are fetched and displayed from on-chain transaction logs.
+How trade events are indexed and displayed.
 
 ## Overview
 
-All instructions now emit Anchor events. `buy` and `sell` emit `TradeEvent` logs, which the frontend parses from raw transaction data to build trade history charts and user activity feeds. Other events (EscrowEvent, MarketCreatedEvent, MarketPausedEvent, LiquidityEvent, ResolutionEvent, RedemptionEvent) are also emitted but not yet indexed client-side. Currently there is no indexer — events are fetched directly from the RPC. See [Indexer Plan](INDEXER_PLAN.md) for the full list of event types and the plan to capture them all server-side.
+All instructions emit Anchor events. `buy` and `sell` emit `TradeEvent` logs which are captured by a Helius webhook, stored in Postgres, and served via REST API. The frontend queries the indexer instead of parsing raw on-chain transaction logs.
+
+See [Indexer](indexer.md) for the full pipeline architecture, API endpoints, and database schema.
 
 ## Types
 
@@ -49,33 +51,26 @@ interface UserTradeEntry {
 ### How it works
 
 ```
-getSignaturesForAddress(marketPDA, { limit })
-    │  → returns transaction signatures touching the market account
+fetch('/api/trades?marketId=X&limit=50')
+    │  → single HTTP call to the indexer API
     ▼
-Batch fetch transactions (10 at a time)
-    │  → getTransaction(signature) for each
+Returns trades from Postgres, newest-first
+    │
     ▼
-Parse log messages
-    │  → scan for "Program data: " prefixes
-    │  → base64-decode the payload
-    │  → match Anchor event discriminator for TradeEvent
-    ▼
-Decode event fields
-    │  → trader, marketId, wordIndex, side, quantity, cost, timestamp
-    ▼
-Compute implied price after each trade
-    │  → lmsrImpliedPrice(newYesQty, newNoQty, b)
-    ▼
-Return TradeHistoryPoint[]
+Map to TradeHistoryPoint[]
 ```
 
-### Chart rendering
+Previously this required `getSignaturesForAddress` + batch `getTransaction` + log parsing (5-15 RPC calls). Now it's one HTTP request.
 
-Trade history feeds the price chart on the market page:
+### Chart data
 
-- Starts at 0.50 (LMSR initial price when quantities are equal)
-- Each trade point plots the resulting implied YES price for that word
-- Per-word price lines are shown (one line per word in the market)
+For the price chart specifically, the frontend calls the dedicated chart endpoint:
+
+```
+fetch('/api/trades/chart?marketId=X&wordIndex=0&limit=500')
+```
+
+Returns trades oldest-first with `impliedPrice` ready for charting. Chart starts at 0.50 (LMSR initial price) and plots each trade's resulting implied YES price.
 
 ## Fetching user trade history
 
@@ -84,23 +79,16 @@ Trade history feeds the price chart on the market page:
 ### How it works
 
 ```
-getSignaturesForAddress(PROGRAM_ID, { limit })
-    │  → scans the entire program's transaction history
+fetch('/api/trades?trader=X&limit=50')
+    │  → single HTTP call to the indexer API
     ▼
-Batch fetch + parse ALL TradeEvent logs (not just the user's)
+Returns trades with isBuy already determined server-side
     │
-    ▼
-Sort chronologically, track global YES/NO quantities per word
-    │
-    ▼
-For each event where trader == userAddr:
-    │  → compare quantity to previous global state
-    │  → quantity increased = buy, decreased = sell
     ▼
 fetchAllMarkets()
-    │  → load all markets for label resolution
+    │  → load markets for label resolution
     ▼
-Enrich with market/word labels, isBuy flag
+Enrich with market/word labels
     │
     ▼
 Return UserTradeEntry[]
@@ -108,32 +96,26 @@ Return UserTradeEntry[]
 
 ### Buy vs sell detection
 
-The `isBuy` flag is determined by global quantity tracking rather than any field on the event itself:
-
-1. All program trade events are collected and sorted by timestamp
-2. Running totals of `yesQuantity` and `noQuantity` are maintained per `(marketId, wordIndex)`
-3. For each user trade, the `newYesQty` / `newNoQty` from the event is compared to the running total
-4. If the relevant quantity went up → **buy**; if it went down → **sell**
-
-This is necessary because the `TradeEvent` doesn't contain an explicit buy/sell flag.
+Buy/sell is determined server-side by the webhook handler during insertion. Events are sorted chronologically, and for each event the global quantity for that word is compared before and after — if the relevant side's quantity increased, it's a buy.
 
 ### Where it's displayed
 
 - **Profile page → History tab**: Full list with Buy (green) / Sell (orange) badges, timestamp, market/word labels, direction, quantity, cost, and Solana Explorer links. Sells show green `+` prefix on cost (money received), buys show `-` (money spent)
 - **Profile page → Cost basis**: Trade history feeds the `costBasisMap` computation (see [Portfolio](portfolio.md))
 
-## Limitations
+## Pagination
 
-This approach works for the devnet prototype but has scaling issues:
+The indexer API supports cursor-based pagination:
 
-- **`fetchTradeHistory`**: Fetches full transactions in batches of 10, parsing every log line — slow for markets with many trades
-- **`fetchUserTradeHistory`**: Scans the *entire program's* transaction history and filters client-side — unusable at scale
-- **`getSignaturesForAddress`** has a default limit (1000) and will miss older trades as history grows
+```
+GET /api/trades?marketId=2&limit=50&before=2026-02-17T00:00:00Z
+```
 
-See [Scalability Roadmap](scalability.md) for the planned migration to an indexer.
+The `cursor` field in the response is the timestamp of the last result. Pass it as `before` for the next page.
 
 ## File references
 
-- **Source**: `lib/mentionMarket.ts` (`fetchTradeHistory`, `fetchUserTradeHistory`)
+- **Indexer pipeline**: See [Indexer](indexer.md)
+- **Frontend SDK**: `lib/mentionMarket.ts` (`fetchTradeHistory`, `fetchUserTradeHistory`)
 - **Market page chart**: `app/market/[id]/page.tsx`
 - **Profile history tab**: `app/profile/page.tsx`

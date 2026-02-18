@@ -2,19 +2,11 @@
 
 The current implementation works for a low-traffic devnet prototype. This page documents the architectural bottlenecks and planned fixes for production scaling.
 
-## 1. Move trade history to an indexer
+## 1. ~~Move trade history to an indexer~~ — DONE
 
-**Problem**: `fetchTradeHistory` and `fetchUserTradeHistory` parse raw on-chain transaction logs via `getSignaturesForAddress` + `getTransaction` RPC calls.
+Implemented. Helius webhook captures `TradeEvent` logs in real-time, stores them in Railway Postgres, and serves them via REST API (`/api/trades`, `/api/trades/chart`). Frontend now makes a single HTTP call instead of 5-15 RPC calls.
 
-- Slow — fetches and deserializes full transactions in batches of 10
-- Expensive — N+1 RPC requests (1 for signatures, N for transactions)
-- Unreliable — `getSignaturesForAddress` has a default limit and will miss older trades
-- `fetchUserTradeHistory` scans the *entire program's* transaction history and filters by trader pubkey client-side
-
-**Fix**: Use an indexer (Helius, Shyft, Yellowstone/Geyser plugin, or custom) to:
-- Subscribe to `TradeEvent` Anchor events in real-time
-- Store in a database indexed by `marketId`, `trader`, `wordIndex`, `timestamp`
-- Expose a REST/GraphQL API that the frontend queries
+See [Indexer](indexer.md) for the full implementation.
 
 ## 2. Replace client-side account fetching with an API layer
 
@@ -90,7 +82,7 @@ Add caching between the frontend and data sources:
 
 | Priority | Change | Effort | Impact |
 |---|---|---|---|
-| **P0** | Indexer for trade events | Medium | Unblocks everything else; current approach breaks at ~1000 trades |
+| ~~**P0**~~ | ~~Indexer for trade events~~ | ~~Medium~~ | **DONE** — see [Indexer](indexer.md) |
 | **P0** | API layer for markets/positions | Medium | Eliminates `getProgramAccounts` bottleneck |
 | **P1** | WebSocket subscriptions | Low | Real-time prices, eliminates polling |
 | **P1** | Server-side cost basis | Low | Fast profile loads, accurate P&L |

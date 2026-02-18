@@ -18,12 +18,14 @@
     - [User Positions](fetching-user-positions.md)
     - [Trade History](trade-history.md)
     - [Portfolio & Cost Basis](portfolio.md)
+  - [Indexer](indexer.md)
   - [Escrow PDA](escrow-pda.md)
 - Frontend
   - [SDK Reference](frontend-sdk.md)
   - [Trading Flow](trading-flow.md)
   - [Admin Operations](admin-operations.md)
 - [Market Types](market-types.md)
+- [Audit Report](audit-report.md)
 - Designs
   - [CLOB Requirements](clob-requirements.md)
   - [Scalability Roadmap](scalability.md)
