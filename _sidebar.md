@@ -26,6 +26,7 @@
   - [Admin Operations](admin-operations.md)
 - [Market Types](market-types.md)
 - [Roadmap](roadmap.md)
+- [Marketing Plan](marketing-plan.md)
 - [Audit Report](audit-report.md)
 - Designs
   - [CLOB Requirements](clob-requirements.md)
