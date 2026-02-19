@@ -30,6 +30,8 @@ Per-market controls for adding and withdrawing liquidity.
 
 ### Withdraw liquidity
 
+LP liquidity is locked until the market resolves. The withdraw button is only available for resolved markets.
+
 1. Admin enters shares to burn
 2. Calls `createWithdrawLiquidityIx(adminWallet, marketId, sharesToBurn)`
 3. Proportional SOL returned from vault
