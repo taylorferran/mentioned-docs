@@ -25,6 +25,7 @@
   - [Trading Flow](trading-flow.md)
   - [Admin Operations](admin-operations.md)
 - [Market Types](market-types.md)
+- [Roadmap](roadmap.md)
 - [Audit Report](audit-report.md)
 - Designs
   - [CLOB Requirements](clob-requirements.md)
