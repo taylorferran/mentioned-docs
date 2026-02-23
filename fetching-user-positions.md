@@ -72,8 +72,6 @@ A position is claimable when all three conditions are true:
 
 ```typescript
 export interface UserPosition {
-  wordMarketPubkey: Address
-  market: MarketAccount
   marketId: bigint
   wordIndex: number
   wordLabel: string

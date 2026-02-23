@@ -32,6 +32,7 @@ seeds: ["escrow", user.key()]
 3. Set `escrow.owner` to the user's pubkey
 4. Increment `escrow.balance` by `amount` (checked add)
 5. Store the PDA bump
+6. Emit `EscrowEvent` with action `Deposit`
 
 ## Errors
 
@@ -44,7 +45,7 @@ seeds: ["escrow", user.key()]
 
 ```rust
 pub fn handle_deposit(ctx: Context<Deposit>, amount: u64) -> Result<()> {
-    require!(amount > 0, MentionMarketError::ZeroAmount);
+    require!(amount > 0, AmmError::ZeroAmount);
 
     system_program::transfer(
         CpiContext::new(
@@ -62,8 +63,16 @@ pub fn handle_deposit(ctx: Context<Deposit>, amount: u64) -> Result<()> {
     escrow.balance = escrow
         .balance
         .checked_add(amount)
-        .ok_or(MentionMarketError::MathOverflow)?;
+        .ok_or(AmmError::MathOverflow)?;
     escrow.bump = ctx.bumps.escrow;
+
+    emit!(EscrowEvent {
+        user: ctx.accounts.user.key(),
+        action: EscrowAction::Deposit,
+        amount,
+        new_balance: escrow.balance,
+        timestamp: Clock::get()?.unix_timestamp,
+    });
 
     Ok(())
 }

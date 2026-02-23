@@ -2,7 +2,8 @@
 
 The Mentioned AMM is a Solana smart contract built with Anchor. It handles custody, LMSR-based pricing, token minting, liquidity provision, and payouts for binary YES/NO prediction markets on word mentions.
 
-Program ID: `2oKQaiKx3C2qpkqFYGDdvEGTyBDJP85iuQtJ5vaPdFrU` (devnet)
+Program ID (AMM): `2oKQaiKx3C2qpkqFYGDdvEGTyBDJP85iuQtJ5vaPdFrU` (devnet)
+Program ID (legacy CLOB): `AJ4XSwJoh2C8vmd8U7xhpzMkzkZZPaBRpbfpkmm4DmeN` (devnet)
 
 ## Architecture
 
@@ -52,10 +53,10 @@ A designated resolver address (set at market creation) handles outcome determina
 
 ### Liquidity Provider (LP)
 
-LPs provide SOL to the AMM pool, earning fees from trades.
+LPs provide SOL to the AMM pool, deepening liquidity and reducing price impact.
 
 - **deposit_liquidity** — Deposit SOL, receive LP shares
-- **withdraw_liquidity** — Burn LP shares, receive proportional SOL
+- **withdraw_liquidity** — Burn LP shares, receive proportional SOL (only after market resolves)
 
 ## Account structures
 
@@ -88,6 +89,7 @@ Seeds: `["market", market_id (u64 LE)]`
 | trade_fee_bps | u16 | Fee per trade in basis points |
 | protocol_fee_bps | u16 | Protocol's portion of trade fee |
 | accumulated_fees | u64 | Total fees collected |
+| _reserved | [u8; 256] | V2 extension space |
 
 ### WordState (embedded in MarketAccount)
 
@@ -100,6 +102,7 @@ Seeds: `["market", market_id (u64 LE)]`
 | yes_quantity | i64 | Net YES tokens outstanding (scaled 1e9) |
 | no_quantity | i64 | Net NO tokens outstanding (scaled 1e9) |
 | outcome | Option\<bool\> | None = unresolved, true = mentioned, false = not |
+| _reserved | [u8; 32] | Per-word extension space |
 
 ### UserEscrow
 

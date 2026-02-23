@@ -43,6 +43,7 @@ Each `MarketAccount` contains all data for a market, including embedded `WordSta
 | trade_fee_bps | u16 LE | Fee in basis points |
 | protocol_fee_bps | u16 LE | Protocol fee portion |
 | accumulated_fees | u64 LE | Total fees collected |
+| _reserved | [u8; 256] | Reserved for future fields (skipped by deserializer) |
 
 **WordState fields (per word):**
 
@@ -55,6 +56,7 @@ Each `MarketAccount` contains all data for a market, including embedded `WordSta
 | yes_quantity | i64 LE | Net YES tokens outstanding |
 | no_quantity | i64 LE | Net NO tokens outstanding |
 | outcome | Option\<bool\> | None, true (mentioned), or false |
+| _reserved | [u8; 32] | Reserved for future fields (skipped by deserializer) |
 
 ## Fetching a single market
 

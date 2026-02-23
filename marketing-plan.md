@@ -198,7 +198,7 @@ Tone: sharp, slightly irreverent, confident but not tryhard. "The smart friend w
 >
 > The architecture is fully on-chain: LMSR pricing in the smart contract, YES/NO tokens as real SPL tokens with wallet metadata, a dedicated resolver role for transparent outcomes, and trade events indexed via Helius webhooks into Postgres for real-time charts and history.
 >
-> MVP on Solana devnet now. Mainnet and a full CLOB launch planned for late March.
+> MVP on Solana devnet now. Mainnet launch planned for late March.
 
 ### Post L3: Why Solana
 
@@ -263,5 +263,5 @@ Reference sheet for writing future posts:
 | Trading flow | Deposit SOL → escrow → buy/sell YES/NO → resolution → redeem → withdraw |
 | Indexer | Helius webhooks → Postgres → REST API for charts and history |
 | Market categories | Entertainment, politics/business, sports, written content, timing markets |
-| Current status | Devnet (mainnet March) |
+| Current status | Devnet (mainnet targeting late March) |
 | Competitors / context | Polymarket ($1 = 1 share), Kalshi. We're SOL-denominated and word-level granular |

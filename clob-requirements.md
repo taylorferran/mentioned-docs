@@ -1,5 +1,7 @@
 # CLOB Requirements
 
+> **Status: Future design document.** The current MVP uses an on-chain AMM with LMSR pricing. This document describes the planned off-chain CLOB that would complement or replace the AMM as a v2 pricing mechanism. The `mention-market` (old CLOB) contract exists but is not wired to the frontend — all active trading uses `mention-market-amm`.
+
 What the off-chain order book needs to provide so the frontend can support real trading.
 
 ## Current state (pre-CLOB)

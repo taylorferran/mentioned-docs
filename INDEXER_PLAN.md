@@ -1,5 +1,7 @@
 # Indexer Plan — Helius Webhooks + Postgres on Devnet
 
+> **Status: Implemented.** This was the original planning document. The indexer is now live — see [Indexer](indexer.md) for the current implementation details, API endpoints, and database schema. Some details below (e.g., separate Railway service) differ from the final implementation (Next.js API routes).
+
 Plan for setting up a Helius webhook to capture `TradeEvent` Anchor events from the AMM program on devnet, persisting them to Postgres, and exposing them via a REST API. This is the same architecture we'd use in production.
 
 ---

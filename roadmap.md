@@ -11,9 +11,9 @@
 
 ## Late March
 
-- CLOB
 - Security audit
 - MVP mainnet
+- CLOB (v2 pricing — see [CLOB Requirements](clob-requirements.md))
 - Investor list / grants / partnership outreach
 
 ## April

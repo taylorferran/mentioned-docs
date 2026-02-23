@@ -12,7 +12,7 @@ Markets are created around sets of words (up to 8 per market). For each word, us
 - **YES/NO tokens** — Minted when a user buys via the AMM, representing each side of the bet
 - **LMSR** — On-chain pricing model that adjusts prices based on token quantities
 - **Escrow** — Users deposit SOL before trading and withdraw after resolution
-- **Liquidity** — LPs deposit SOL to deepen the market, earning trade fees
+- **Liquidity** — LPs deposit SOL to deepen the market and reduce price impact
 - **Resolution** — Each word is resolved individually as mentioned (true) or not (false)
 
 ## Quick links

@@ -24,6 +24,7 @@ All PDAs are derived from the program ID using these seed patterns:
 | `getNoMintPDA(marketId, wordIndex)` | `["no_mint", marketId, wordIndex]` | NO token mint |
 | `getEscrowPDA(wallet)` | `["escrow", wallet]` | User escrow account |
 | `getLpPositionPDA(marketId, lpWallet)` | `["lp", marketId, lpWallet]` | LP position account |
+| `getMetadataPDA(mint)` | `["metadata", TOKEN_METADATA_PROGRAM, mint]` | Metaplex metadata account (derived from metadata program, not AMM program) |
 | `getAssociatedTokenAddress(mint, owner)` | Standard ATA derivation | User's token account for a given mint |
 
 ## Instruction builders
@@ -124,10 +125,10 @@ The client-side math uses JavaScript floating-point (`Math.exp` / `Math.log`), w
 interface LpPosition {
   version: number
   bump: number
-  market: Pubkey
-  owner: Pubkey
+  market: Address
+  owner: Address
   shares: bigint
-  depositedAt: number
+  depositedAt: bigint
 }
 ```
 

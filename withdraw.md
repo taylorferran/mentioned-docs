@@ -1,6 +1,6 @@
 # withdraw
 
-Withdraws available SOL from the user's escrow PDA back to their wallet. Only unlocked balance can be withdrawn — locked funds (committed to open orders) are untouchable.
+Withdraws available SOL from the user's escrow PDA back to their wallet.
 
 **Caller:** User
 **Status:** Implemented
@@ -28,9 +28,10 @@ seeds: ["escrow", user.key()]
 ## Logic
 
 1. Validate `amount > 0`
-2. Check `amount <= escrow.balance` (only unlocked funds)
+2. Check `amount <= escrow.balance`
 3. Decrement `escrow.balance` by `amount` (checked sub)
 4. Transfer lamports directly from escrow PDA to user wallet
+5. Emit `EscrowEvent` with action `Withdraw`
 
 ## Errors
 
@@ -45,21 +46,26 @@ seeds: ["escrow", user.key()]
 
 ```rust
 pub fn handle_withdraw(ctx: Context<Withdraw>, amount: u64) -> Result<()> {
-    require!(amount > 0, MentionMarketError::ZeroAmount);
+    require!(amount > 0, AmmError::ZeroAmount);
 
     let escrow = &mut ctx.accounts.escrow;
-    require!(
-        amount <= escrow.balance,
-        MentionMarketError::InsufficientBalance
-    );
+    require!(amount <= escrow.balance, AmmError::InsufficientBalance);
 
     escrow.balance = escrow
         .balance
         .checked_sub(amount)
-        .ok_or(MentionMarketError::MathOverflow)?;
+        .ok_or(AmmError::MathOverflow)?;
 
     **escrow.to_account_info().try_borrow_mut_lamports()? -= amount;
     **ctx.accounts.user.to_account_info().try_borrow_mut_lamports()? += amount;
+
+    emit!(EscrowEvent {
+        user: ctx.accounts.user.key(),
+        action: EscrowAction::Withdraw,
+        amount,
+        new_balance: escrow.balance,
+        timestamp: Clock::get()?.unix_timestamp,
+    });
 
     Ok(())
 }
