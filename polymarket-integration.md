@@ -2,6 +2,8 @@
 
 All Polymarket trading on Mentioned is proxied through Jupiter's Prediction API (`https://api.jup.ag/prediction/v1`). The frontend never calls Jupiter directly — all requests go through our Next.js API routes which attach the API key and forward the client IP.
 
+> Currently fetching esports markets as a temporary category while we wait for Jupiter to add mention markets to their API. Once available, the platform will switch to mention markets as the primary content.
+
 ## Trading Flow
 
 1. User browses events on the homepage or event detail page

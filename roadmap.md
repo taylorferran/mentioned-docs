@@ -2,13 +2,14 @@
 
 ## Now — Polymarket Platform
 
-- Build on Polymarket via Jupiter API (esports focus)
+- Build on Polymarket via Jupiter API (esports temporarily while mention markets aren't on Jupiter yet)
 - Social and competitive features: leaderboard, profiles, chat
 - Waitlist and early user acquisition
 
-## Next — Growth & Community
+## Next — Mention Markets on Polymarket
 
-- Expand event categories beyond esports
+- Switch to mention markets once Jupiter adds them to their API
+- Mentioned becomes the primary frontend for mention market trading on Polymarket
 - Investor outreach / grants / partnerships
 - Security hardening and mainnet readiness
 

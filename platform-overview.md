@@ -1,6 +1,6 @@
 # Platform Overview
 
-Mentioned is a social prediction market platform on Solana. The current product integrates Jupiter's Polymarket API for esports and live event trading, with competitive features (leaderboards, profiles, chat) built on top.
+Mentioned is a social prediction market platform on Solana. The platform integrates Jupiter's Polymarket API with competitive features (leaderboards, profiles, chat) built on top. Currently showing esports markets while we wait for Jupiter to add mention markets to their API.
 
 ## Pages
 
