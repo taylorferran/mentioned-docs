@@ -1,74 +1,66 @@
 # MVP Flow
 
-End-to-end flow for the Mentioned MVP.
+End-to-end flow for the Mentioned MVP — a social prediction market platform built on Polymarket.
 
 ---
 
-## 1. Market creation
-
-<div class="flow-step">
-  <div class="flow-section-label">Admin</div>
-  <strong>Create market</strong> — Choose a market name, set of words (up to 8), resolution deadline, and LMSR parameters.
-</div>
-<div class="flow-step">
-  <div class="flow-section-label">On-chain</div>
-  <strong>Save to contract</strong> — A single MarketAccount is created with embedded word states, YES/NO mints, and a SOL vault.
-</div>
-
----
-
-## 2. Liquidity provision
-
-<div class="flow-step">
-  <div class="flow-section-label">LP</div>
-  <strong>Deposit liquidity</strong> — Liquidity providers deposit SOL into the market vault, receiving LP shares. This deepens the market and tightens spreads.
-</div>
-
----
-
-## 3. User onboarding
+## 1. Connect wallet
 
 <div class="flow-step">
   <div class="flow-section-label">User</div>
-  <strong>Connect wallet</strong> — User connects their Solana wallet.
-</div>
-<div class="flow-step">
-  <div class="flow-section-label">User</div>
-  <strong>Deposit SOL</strong> — User deposits SOL into their <a href="#/escrow-pda">Mentioned escrow account</a>.
+  <strong>Connect Phantom</strong> — User connects their Solana wallet. Auto-reconnect restores the session on return visits.
 </div>
 
 ---
 
-## 4. Trading
+## 2. Set up profile
+
+<div class="flow-step">
+  <div class="flow-section-label">User</div>
+  <strong>Choose username</strong> — Optional display name (3–20 chars, unique). Appears on leaderboard and in chat.
+</div>
+
+---
+
+## 3. Browse events
 
 <div class="flow-step">
   <div class="flow-section-label">App</div>
-  <strong>Load market</strong> — Fetch the MarketAccount from the contract, displaying words with LMSR-derived prices.
+  <strong>Load events</strong> — Fetch esports events from Jupiter's Polymarket API. Displayed as Live Now and Upcoming.
 </div>
 <div class="flow-step">
   <div class="flow-section-label">User</div>
-  <strong>Select word</strong> — User picks a word to trade on.
-</div>
-<div class="flow-step">
-  <div class="flow-section-label">User</div>
-  <strong>Buy YES or NO</strong> — User buys tokens via the AMM. Price is calculated by LMSR based on current token quantities. SOL is deducted from escrow, tokens are minted.
-</div>
-<div class="flow-step">
-  <div class="flow-section-label">User</div>
-  <strong>Sell (optional)</strong> — User can sell tokens back to the AMM before resolution to lock in profit or cut losses.
-</div>
-<div class="flow-step">
-  <div class="flow-section-label">User</div>
-  <strong>Receive shares</strong> — YES/NO tokens land in the user's token account. SOL is drawn from their escrow balance.
+  <strong>Select event</strong> — Click into an event to see markets, orderbook, and trading panel.
 </div>
 
 ---
 
-## 5. Resolution
+## 4. Trade
 
 <div class="flow-step">
-  <div class="flow-section-label">Resolver</div>
-  <strong>Resolve words</strong> — Each word is resolved individually as mentioned (true) or not mentioned (false). Market becomes Resolved when all words have outcomes.
+  <div class="flow-section-label">User</div>
+  <strong>Place order</strong> — Select YES or NO, enter amount. Order sent to Jupiter via our API proxy.
+</div>
+<div class="flow-step">
+  <div class="flow-section-label">Wallet</div>
+  <strong>Sign transaction</strong> — Phantom prompts to sign the unsigned transaction returned by Jupiter.
+</div>
+<div class="flow-step">
+  <div class="flow-section-label">App</div>
+  <strong>Record trade</strong> — Trade saved to DB for leaderboard tracking.
+</div>
+
+---
+
+## 5. Manage positions
+
+<div class="flow-step">
+  <div class="flow-section-label">User</div>
+  <strong>Track positions</strong> — View open positions, unrealized P&L, and open orders from the Positions page or Profile.
+</div>
+<div class="flow-step">
+  <div class="flow-section-label">User</div>
+  <strong>Close early</strong> — Sell a position before settlement to lock in profit or cut losses.
 </div>
 
 ---
@@ -76,14 +68,23 @@ End-to-end flow for the Mentioned MVP.
 ## 6. Settlement
 
 <div class="flow-step">
-  <div class="flow-section-label">User</div>
-  <strong>Redeem winnings</strong> — Users holding winning tokens redeem them for SOL (1 token = 1 SOL). Payout goes to escrow.
+  <div class="flow-section-label">Market</div>
+  <strong>Event settles</strong> — Market resolves based on real-world outcome.
 </div>
 <div class="flow-step">
   <div class="flow-section-label">User</div>
-  <strong>Withdraw SOL</strong> — User withdraws SOL from their escrow account.
+  <strong>Claim winnings</strong> — Winning positions show a Claim button. Sign the payout transaction to receive funds.
+</div>
+
+---
+
+## 7. Compete
+
+<div class="flow-step">
+  <div class="flow-section-label">App</div>
+  <strong>Leaderboard</strong> — Weekly rankings by P&L, volume, and win rate. Resets every Monday UTC.
 </div>
 <div class="flow-step">
-  <div class="flow-section-label">LP</div>
-  <strong>Withdraw liquidity</strong> — LPs burn their shares and withdraw proportional SOL from the vault.
+  <div class="flow-section-label">User</div>
+  <strong>Chat</strong> — Real-time global chat with other traders.
 </div>

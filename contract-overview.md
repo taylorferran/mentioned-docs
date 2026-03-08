@@ -1,9 +1,10 @@
 # Contract Overview
 
+> **Future feature.** The mention market AMM is built and deployed on devnet. It will be launched once the Polymarket-based platform has traction.
+
 The Mentioned AMM is a Solana smart contract built with Anchor. It handles custody, LMSR-based pricing, token minting, liquidity provision, and payouts for binary YES/NO prediction markets on word mentions.
 
-Program ID (AMM): `2oKQaiKx3C2qpkqFYGDdvEGTyBDJP85iuQtJ5vaPdFrU` (devnet)
-Program ID (legacy CLOB): `AJ4XSwJoh2C8vmd8U7xhpzMkzkZZPaBRpbfpkmm4DmeN` (devnet)
+Program ID: `2oKQaiKx3C2qpkqFYGDdvEGTyBDJP85iuQtJ5vaPdFrU` (devnet)
 
 ## Architecture
 

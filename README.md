@@ -1,24 +1,22 @@
 # Mentioned
 
-Mentioned is a mention market prediction platform built on Solana. Users trade on whether specific words will be mentioned in defined contexts, using an on-chain AMM with LMSR pricing.
+Mentioned is a social prediction market platform on Solana. Users trade on esports and live events via Polymarket (Jupiter API), compete on weekly leaderboards, and chat in real-time. Custom mention markets (on-chain LMSR AMM) are in development for future launch.
 
-## How it works
+**Stack:** Next.js 14 · React 18 · TypeScript · Tailwind CSS · Solana · PostgreSQL (Railway) · Phantom Wallet
 
-Markets are created around sets of words (up to 8 per market). For each word, users can buy **YES** or **NO** tokens — betting on whether that word will be mentioned. Prices are set dynamically by the LMSR (Logarithmic Market Scoring Rule) based on supply and demand. When the market resolves, winning token holders redeem their tokens for SOL.
+## What users can do
 
-## Key concepts
-
-- **Market** — A collection of words to trade on, stored as a single `MarketAccount` on Solana
-- **YES/NO tokens** — Minted when a user buys via the AMM, representing each side of the bet
-- **LMSR** — On-chain pricing model that adjusts prices based on token quantities
-- **Escrow** — Users deposit SOL before trading and withdraw after resolution
-- **Liquidity** — LPs deposit SOL to deepen the market and reduce price impact
-- **Resolution** — Each word is resolved individually as mentioned (true) or not (false)
+- **Trade** — Buy/sell YES/NO positions on esports matches and live events through Jupiter's Polymarket integration
+- **Compete** — Weekly leaderboard rankings by P&L, volume, and win rate
+- **Chat** — Global real-time chat with other traders
+- **Track** — Positions, open orders, trade history, and P&L from a single profile
 
 ## Quick links
 
-- [MVP Flow](mvp-flow.md) — End-to-end walkthrough of the MVP
-- [Contract Overview](contract-overview.md) — Full contract architecture and instructions
-- [Frontend SDK](frontend-sdk.md) — Client library reference (instruction builders, LMSR math)
-- [Trading Flow](trading-flow.md) — Buy/sell/claim flows in the UI
-- [Market Types](market-types.md) — Potential market categories
+- [Platform Overview](platform-overview.md) — Pages, components, and architecture
+- [Polymarket Integration](polymarket-integration.md) — Jupiter API trading flow
+- [Leaderboard](leaderboard.md) — Weekly ranking system
+- [API Routes](api-routes.md) — Full API reference
+- [Database Schema](database.md) — All tables and indexes
+- [Roadmap](roadmap.md) — What's next
+- [Mention Markets](contract-overview.md) — On-chain AMM (future)

@@ -1,26 +1,20 @@
 # Roadmap
 
----
+## Now — Polymarket Platform
 
-## Early March
+- Build on Polymarket via Jupiter API (esports focus)
+- Social and competitive features: leaderboard, profiles, chat
+- Waitlist and early user acquisition
 
-- MVP devnet (AMM)
-- Initial marketing
-- Branding in place
-- Replay / resolution transparency
+## Next — Growth & Community
 
-## Late March
+- Expand event categories beyond esports
+- Investor outreach / grants / partnerships
+- Security hardening and mainnet readiness
 
-- Security audit
-- MVP mainnet
-- CLOB (v2 pricing — see [CLOB Requirements](clob-requirements.md))
-- Investor list / grants / partnership outreach
+## Later — Mention Markets
 
-## April
-
-- Colosseum plan
-- Consensus v2
-
-## June
-
-- World Cup incentives plan
+- Launch custom on-chain mention markets (LMSR AMM — already built on devnet)
+- Market types: live events, speeches, earnings calls, podcasts, sports commentary
+- See [Contract Overview](contract-overview.md) for the on-chain architecture
+- See [Market Types](market-types.md) for category ideas

@@ -2,7 +2,7 @@
 
 # Mentioned
 
-> Mention markets on Solana
+> Social prediction markets on Solana
 
 [Get Started](#mentioned)
-[MVP Flow](mvp-flow.md)
+[Platform Overview](platform-overview.md)

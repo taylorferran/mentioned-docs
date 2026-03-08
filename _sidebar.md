@@ -1,8 +1,19 @@
 - [Introduction](/)
 - [MVP Flow](mvp-flow.md)
-- On-chain
-  - Contracts
-    - [Overview](contract-overview.md)
+- Platform
+  - [Overview](platform-overview.md)
+  - [Polymarket Integration](polymarket-integration.md)
+  - [Leaderboard](leaderboard.md)
+  - [Chat](chat.md)
+  - [Profiles](profiles.md)
+- Reference
+  - [API Routes](api-routes.md)
+  - [Database Schema](database.md)
+- [Roadmap](roadmap.md)
+- Mention Markets (Future)
+  - [Contract Overview](contract-overview.md)
+  - [Market Types](market-types.md)
+  - Instructions
     - [deposit](deposit.md)
     - [withdraw](withdraw.md)
     - [create_market](create-market.md)
@@ -20,15 +31,6 @@
     - [Portfolio & Cost Basis](portfolio.md)
   - [Indexer](indexer.md)
   - [Escrow PDA](escrow-pda.md)
-- Frontend
-  - [SDK Reference](frontend-sdk.md)
+  - [Frontend SDK](frontend-sdk.md)
   - [Trading Flow](trading-flow.md)
   - [Admin Operations](admin-operations.md)
-- [Market Types](market-types.md)
-- [Roadmap](roadmap.md)
-- [Marketing Plan](marketing-plan.md)
-- [Audit Report](audit-report.md)
-- Designs
-  - [CLOB Requirements](clob-requirements.md)
-  - [Scalability Roadmap](scalability.md)
-  - [Indexer Plan](INDEXER_PLAN.md)
