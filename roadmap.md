@@ -2,16 +2,15 @@
 
 ## Now — Social Prediction Platform
 
-- Polymarket trading via Jupiter API (esports while waiting for Jupiter to add mention markets)
+- Polymarket trading via Jupiter API (mention markets)
 - Free/virtual markets with play tokens and points
 - Points system with Discord integration
 - Leaderboard, profiles, chat, achievements
 - Waitlist and early user acquisition
 
-## Next — Mention Markets on Polymarket
+## Next — Growth & Community
 
-- Switch to mention market trading once Jupiter adds them to their API
-- Mentioned becomes the primary social frontend for mention market trading on Polymarket
+- Expand market categories and user acquisition
 - Investor outreach / grants / partnerships
 
 ## Later — On-Chain Mention Markets

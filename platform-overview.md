@@ -8,7 +8,7 @@ Mentioned is a social prediction market platform on Solana. It combines two mark
 Landing page with animations and hero content. Entry point for new users.
 
 ### Markets (`/markets`)
-Polymarket events listed by category: esports, crypto, culture, politics. Each card shows team/outcome odds, volume, and close time.
+Polymarket mention market events. Each card shows outcome odds, volume, and close time.
 
 ### Event Detail (`/polymarkets/event/[eventId]`)
 Full trading interface for a Polymarket event. Shows:

@@ -8,7 +8,7 @@ Proxies Jupiter's Prediction API (`https://api.jup.ag/prediction/v1`) with API k
 
 | Route | Method | Purpose |
 |-------|--------|---------|
-| `/api/polymarket` | GET | List events by category (default: esports) |
+| `/api/polymarket` | GET | List mention market events |
 | `/api/polymarket/event` | GET | Single event with markets (`?eventId=`) |
 | `/api/polymarket/positions` | GET | User's positions (`?ownerPubkey=`) |
 | `/api/polymarket/positions/close` | DELETE | Close position (returns unsigned tx) |

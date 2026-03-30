@@ -2,8 +2,6 @@
 
 Paid markets are real-money prediction markets powered by Polymarket via Jupiter's Prediction API. Mentioned acts as a frontend — all order execution, pricing, and settlement is handled by Jupiter/Polymarket.
 
-> **Note:** The platform currently shows esports markets. This is temporary while we wait for Jupiter to add mention markets to their API. Once available, Mentioned will switch to mention market trading as its primary focus.
-
 ## Overview
 
 | Property | Value |
@@ -40,7 +38,7 @@ All routes proxy Jupiter with API key auth and client IP forwarding.
 
 | Route | Method | Purpose |
 |-------|--------|---------|
-| `/api/polymarket` | GET | List events by category (default: esports) |
+| `/api/polymarket` | GET | List mention market events |
 | `/api/polymarket/event` | GET | Single event with markets (`?eventId=`) |
 | `/api/polymarket/positions` | GET | User's open positions (`?ownerPubkey=`) |
 | `/api/polymarket/positions/close` | DELETE | Close a position (returns unsigned tx) |

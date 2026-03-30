@@ -4,14 +4,14 @@ Mentioned is a social prediction market platform on Solana. Users trade YES/NO o
 
 The platform offers two market types:
 - **Free markets** — Virtual LMSR AMM markets using play tokens. No real money. Points earned on wins.
-- **Paid markets** — Real-money trading via Polymarket (Jupiter API). Currently esports-focused while we wait for Jupiter to add mention markets to their API.
+- **Paid markets** — Real-money trading on mention markets via Polymarket (Jupiter API).
 
 **Stack:** Next.js 14 · React 18 · TypeScript · Tailwind CSS · Solana · PostgreSQL (Railway) · Privy · Phantom Wallet
 
 ## What users can do
 
 - **Trade free markets** — Buy/sell YES/NO shares with play tokens on virtual LMSR markets
-- **Trade paid markets** — Real-money positions on esports and live events via Polymarket
+- **Trade paid markets** — Real-money positions on mention markets via Polymarket
 - **Earn points** — Rewarded for trading, winning, chatting, and holding (Discord link required)
 - **Unlock achievements** — 18 milestones that award bonus points
 - **Compete** — Weekly leaderboard by points and trading P&L
