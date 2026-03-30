@@ -1,32 +1,40 @@
 # Profiles
 
-User identity and portfolio tracking for connected wallets.
+User identity, stats, and achievement showcase.
 
-## Username
+## Profile Data
 
-Users can set a display name on the Profile page (`/profile`).
+Stored in `user_profiles`:
 
-| Constraint | Value |
-|------------|-------|
-| Length | 3–20 characters |
-| Characters | Alphanumeric + underscore |
-| Uniqueness | Must be unique across all users |
+| Field | Constraint | Description |
+|-------|-----------|-------------|
+| username | 3–20 chars, alphanumeric + underscore, unique | Display name across leaderboard, chat, and history |
+| pfp_emoji | any emoji | Profile picture shown in chat and on profile |
+| discord_id | unique | Linked Discord account (required for points) |
+| discord_username | unique | Discord display name |
 
-Usernames appear on the leaderboard, in chat, and on trade history. If no username is set, the truncated wallet address is shown instead.
+If no username is set, the truncated wallet address is shown instead.
+
+## Profile Page (`/profile/[username]`)
+
+Public profile showing:
+- Wallet address
+- Summary cards: positions count, total value, P&L, open orders
+- Trade activity tab
+- Unlocked achievements with badges
 
 ## API
 
 | Route | Method | Purpose |
 |-------|--------|---------|
-| `/api/profile` | GET | Get username for wallet |
-| `/api/profile` | PUT | Set or update username (unique constraint) |
+| `/api/profile` | GET | Get profile for connected wallet |
+| `/api/profile` | POST | Create profile |
+| `/api/profile/[username]` | GET | Fetch public profile by username |
 
-## Profile Page
+## Achievements
 
-Shows:
-- Wallet address
-- Summary cards: positions count, total value, P&L, open orders
-- Three-tab interface (same as Positions page):
-  - **Positions** — open positions with P&L
-  - **Open Orders** — pending orders
-  - **History** — all trade activity
+Achievement unlock status is shown on the profile. Each badge displays the achievement name, description, and points awarded. Locked achievements are shown as grayed out. See [Achievements](achievements.md).
+
+## Discord Linking
+
+The profile page includes a Discord link/unlink control. Linking Discord is required to earn points and appear on the points leaderboard. See [Discord Integration](discord-integration.md).

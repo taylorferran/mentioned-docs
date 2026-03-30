@@ -1,29 +1,37 @@
 # Chat
 
-Global real-time chat available to all connected users.
+Two chat systems exist: global chat (site-wide) and per-event chat.
 
-## How It Works
+## Global Chat
 
-- **Polling-based** — fetches new messages every 3 seconds via `GET /api/chat?after={lastMessageId}`
-- **Messages** — limited to 200 characters, rate-limited to 500ms per wallet
-- **Usernames** — auto-populated from `user_profiles` or truncated wallet address
-- **Optimistic UI** — messages appear instantly with a temporary negative ID, replaced when the server confirms
+Available on every page via the collapsible chat bubble in the bottom-right corner.
 
-## UI
+- **Polling** — Fetches new messages every 3 seconds via `GET /api/chat?after={lastMessageId}`
+- **Rate limit** — 500ms per wallet
+- **Message limit** — 200 characters
+- **Usernames** — Pulled from `user_profiles` or truncated wallet address
+- **Optimistic UI** — Message appears instantly with a temporary negative ID, replaced on server confirmation
+- **Unread badge** — Shows count of new messages since last open
+- **Points** — Each message awards 2 points (daily cap: 10), Discord link required
 
-Collapsible chat bubble in the bottom-right corner of every page.
-
-- Unread badge shows count of new messages since last open
-- Auto-scrolls to bottom when expanded
-- Shows username, message, and relative timestamp
-
-## API
+### API
 
 | Route | Method | Purpose |
 |-------|--------|---------|
-| `/api/chat` | GET | Fetch recent messages (50 max, `?after=` for polling) |
-| `/api/chat` | POST | Send message (200 char max, 500ms rate limit per wallet) |
+| `/api/chat` | GET | Recent messages (50 max, `?after=` for polling) |
+| `/api/chat` | POST | Send message (awards chat points + checks achievements) |
 
-## Database
+## Per-Event Chat
 
-Messages stored in `chat_messages` table. See [Database Schema](database.md).
+Each event detail page (`/polymarkets/event/[eventId]`) has its own chat scoped to that event. Messages include `pfp_emoji` from the sender's profile.
+
+### API
+
+| Route | Method | Purpose |
+|-------|--------|---------|
+| `/api/chat/event` | GET | Fetch messages for an event (`?eventId=`) |
+| `/api/chat/event` | POST | Send a message to an event chat |
+
+## Achievements
+
+Sending the first chat message unlocks `first_chat` (50 pts). Sending 50 messages unlocks `loud_mouth` (150 pts). These are checked on every `POST /api/chat`.

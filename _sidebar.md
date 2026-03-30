@@ -2,7 +2,11 @@
 - [MVP Flow](mvp-flow.md)
 - Platform
   - [Overview](platform-overview.md)
-  - [Polymarket Integration](polymarket-integration.md)
+  - [Free Markets](free-markets.md)
+  - [Paid Markets](paid-markets.md)
+  - [Points System](points.md)
+  - [Achievements](achievements.md)
+  - [Discord Integration](discord-integration.md)
   - [Leaderboard](leaderboard.md)
   - [Chat](chat.md)
   - [Profiles](profiles.md)
@@ -10,7 +14,7 @@
   - [API Routes](api-routes.md)
   - [Database Schema](database.md)
 - [Roadmap](roadmap.md)
-- Mention Markets (Future)
+- On-Chain AMM (Future)
   - [Contract Overview](contract-overview.md)
   - [Market Types](market-types.md)
   - Instructions
@@ -32,5 +36,4 @@
   - [Indexer](indexer.md)
   - [Escrow PDA](escrow-pda.md)
   - [Frontend SDK](frontend-sdk.md)
-  - [Trading Flow](trading-flow.md)
   - [Admin Operations](admin-operations.md)

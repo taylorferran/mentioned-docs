@@ -1,6 +1,6 @@
 # MVP Flow
 
-End-to-end flow for the Mentioned MVP — a social prediction market platform built on Polymarket.
+End-to-end user journey on Mentioned.
 
 ---
 
@@ -8,7 +8,7 @@ End-to-end flow for the Mentioned MVP — a social prediction market platform bu
 
 <div class="flow-step">
   <div class="flow-section-label">User</div>
-  <strong>Connect Phantom</strong> — User connects their Solana wallet. Auto-reconnect restores the session on return visits.
+  <strong>Connect</strong> — Phantom or Privy wallet. Auto-reconnect restores the session on return visits.
 </div>
 
 ---
@@ -17,74 +17,81 @@ End-to-end flow for the Mentioned MVP — a social prediction market platform bu
 
 <div class="flow-step">
   <div class="flow-section-label">User</div>
-  <strong>Choose username</strong> — Optional display name (3–20 chars, unique). Appears on leaderboard and in chat.
+  <strong>Set username & emoji</strong> — Optional display name (3–20 chars, unique) and profile emoji. Unlocks achievements and points (75 + 50 pts).
+</div>
+<div class="flow-step">
+  <div class="flow-section-label">User</div>
+  <strong>Link Discord</strong> — Required to earn any points. One Discord per wallet. Assigns verified role in the Mentioned Discord.
 </div>
 
 ---
 
-## 3. Browse events
-
-<div class="flow-step">
-  <div class="flow-section-label">App</div>
-  <strong>Load events</strong> — Fetch esports events from Jupiter's Polymarket API. Displayed as Live Now and Upcoming.
-</div>
-<div class="flow-step">
-  <div class="flow-section-label">User</div>
-  <strong>Select event</strong> — Click into an event to see markets, orderbook, and trading panel.
-</div>
-
----
-
-## 4. Trade
+## 3. Trade (Paid Markets)
 
 <div class="flow-step">
   <div class="flow-section-label">User</div>
-  <strong>Place order</strong> — Select YES or NO, enter amount. Order sent to Jupiter via our API proxy.
+  <strong>Browse events</strong> — Live and upcoming events on <code>/markets</code>. Click an event to open the trading interface.
+</div>
+<div class="flow-step">
+  <div class="flow-section-label">User</div>
+  <strong>Place order</strong> — Select YES or NO, enter amount. Sent to Jupiter via API proxy.
 </div>
 <div class="flow-step">
   <div class="flow-section-label">Wallet</div>
-  <strong>Sign transaction</strong> — Phantom prompts to sign the unsigned transaction returned by Jupiter.
+  <strong>Sign transaction</strong> — Phantom or Privy signs the unsigned tx returned by Jupiter.
 </div>
 <div class="flow-step">
   <div class="flow-section-label">App</div>
-  <strong>Record trade</strong> — Trade saved to DB for leaderboard tracking.
+  <strong>Earn points</strong> — 10 pts per trade (daily cap 20), 100 pts for first ever trade. Discord link required.
 </div>
 
 ---
 
-## 5. Manage positions
+## 4. Trade (Free Markets)
 
 <div class="flow-step">
   <div class="flow-section-label">User</div>
-  <strong>Track positions</strong> — View open positions, unrealized P&L, and open orders from the Positions page or Profile.
+  <strong>Browse free markets</strong> — Virtual LMSR markets with play tokens. No real money.
 </div>
 <div class="flow-step">
   <div class="flow-section-label">User</div>
-  <strong>Close early</strong> — Sell a position before settlement to lock in profit or cut losses.
+  <strong>Buy/sell shares</strong> — LMSR pricing from the virtual pool. Deducted from play token balance.
+</div>
+<div class="flow-step">
+  <div class="flow-section-label">App</div>
+  <strong>Earn points on win</strong> — After resolution, 50% of net token profit converted to points.
 </div>
 
 ---
 
-## 6. Settlement
+## 5. Settlement (Paid Markets)
 
 <div class="flow-step">
   <div class="flow-section-label">Market</div>
-  <strong>Event settles</strong> — Market resolves based on real-world outcome.
+  <strong>Event settles</strong> — Polymarket resolves based on real-world outcome.
 </div>
 <div class="flow-step">
   <div class="flow-section-label">User</div>
-  <strong>Claim winnings</strong> — Winning positions show a Claim button. Sign the payout transaction to receive funds.
+  <strong>Claim winnings</strong> — Green Claim button on winning positions. Sign payout tx to receive funds.
+</div>
+<div class="flow-step">
+  <div class="flow-section-label">App</div>
+  <strong>Earn points</strong> — 50 pts for each winning claim.
 </div>
 
 ---
 
-## 7. Compete
+## 6. Compete
 
 <div class="flow-step">
   <div class="flow-section-label">App</div>
-  <strong>Leaderboard</strong> — Weekly rankings by P&L, volume, and win rate. Resets every Monday UTC.
+  <strong>Points leaderboard</strong> — Weekly rankings by total points. Resets Monday UTC. Discord-linked users only.
+</div>
+<div class="flow-step">
+  <div class="flow-section-label">App</div>
+  <strong>Trading leaderboard</strong> — Weekly P&L, volume, and win rate rankings.
 </div>
 <div class="flow-step">
   <div class="flow-section-label">User</div>
-  <strong>Chat</strong> — Real-time global chat with other traders.
+  <strong>Chat</strong> — Global and per-event chat. Earns 2 pts per message (daily cap 10).
 </div>
