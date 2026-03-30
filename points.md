@@ -19,6 +19,15 @@ Points reward engagement across trading, winning, chatting, and holding. **A lin
 ### Free Market Scoring
 Points from free markets = `max(0, floor((tokens_received - tokens_spent) * 0.5))`. Only awarded if net profit > 0.
 
+### Trade Point Guards
+
+Two checks run before awarding `trade_placed` points in `POST /api/polymarket/trades/record`:
+
+1. **Minimum amount** — `amountUsd < 1` skips the award (no points for dust trades)
+2. **Daily cap** — `getTradePointsCountToday(wallet)` counts `trade_placed` events since midnight UTC; skips if already at 20 awards today
+
+Both guards run before `awardPoints` is called. The daily count query mirrors the same pattern used for `getChatPointsCountToday` (chat's 10/day cap).
+
 ### Hold Points
 Hold duration is computed from the earliest `created_at` in `polymarket_trades` for a given `wallet + market_id`. Each hold tier is a one-time award per position.
 
